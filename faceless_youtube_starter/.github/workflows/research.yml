@@ -1,0 +1,32 @@
+name: Daily topic research
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 04:30 UTC = 10:00 IST. GitHub schedule is best-effort, not exact.
+    - cron: "30 4 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install -r requirements.txt
+      - name: Run research
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python -m src.research
+      - uses: actions/upload-artifact@v4
+        with:
+          name: topic-research-${{ github.run_number }}
+          path: output/
+          if-no-files-found: error
+          retention-days: 7
