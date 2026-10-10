@@ -1,0 +1,31 @@
+name: Manual video render smoke test
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Short text for demo card"
+        required: true
+        default: "AI ko samajhne ka simple tareeqa"
+
+permissions:
+  contents: read
+
+jobs:
+  render-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Render demo
+        run: python -m src.render_demo --text "${{ inputs.title }}" --output work/demo.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: render-demo-${{ github.run_number }}
+          path: work/demo.mp4
+          retention-days: 3

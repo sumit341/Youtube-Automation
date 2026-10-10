@@ -1,0 +1,36 @@
+channel:
+  name: "Hindi Tech Explainers"
+  language: "Hindi/Hinglish"
+  default_niche: "AI and technology explainers"
+  audience: "Hindi-speaking curious beginners"
+  default_video_minutes: 6
+  default_short_seconds: 35
+
+research:
+  search_queries:
+    - "AI tools Hindi"
+    - "technology explained Hindi"
+    - "cyber safety Hindi"
+    - "science technology facts Hindi"
+  max_results_per_query: 25
+  lookback_days: 30
+  target_topic_keywords:
+    - AI
+    - artificial intelligence
+    - technology
+    - tech
+    - cyber
+    - scam
+    - science
+    - smartphone
+    - internet
+    - digital
+    - Hindi
+    - India
+
+publishing:
+  # Keep private until OAuth upload is tested end-to-end.
+  privacy_status: "private"
+  category_id: "28"  # Science & Technology
+  made_for_kids: false
+  enable_upload: false
