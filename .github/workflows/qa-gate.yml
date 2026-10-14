@@ -6,7 +6,9 @@ on:
   push:
     paths:
       - "src/qa_gate.py"
+      - "src/upload_video.py"
       - "tests/test_qa_gate.py"
+      - "tests/test_upload_qa_gate.py"
       - ".github/workflows/qa-gate.yml"
 
 permissions:
