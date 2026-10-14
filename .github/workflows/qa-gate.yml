@@ -1,0 +1,62 @@
+
+name: QA gate tests
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "src/qa_gate.py"
+      - "tests/test_qa_gate.py"
+      - ".github/workflows/qa-gate.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  qa-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Run QA gate tests
+        id: tests
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests -v 2>&1 | tee qa-test.log
+
+      - name: Write GitHub Actions summary
+        if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          {
+            echo "## QA gate test report"
+            echo "- Result: ${JOB_STATUS}"
+            echo "- Commit: ${GITHUB_SHA}"
+            echo
+            echo '```text'
+            cat qa-test.log 2>/dev/null || echo "Test log unavailable"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Save test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-gate-test-log-${{ github.run_number }}
+          path: qa-test.log
+          if-no-files-found: warn
+          retention-days: 7
